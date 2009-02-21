@@ -28,12 +28,63 @@ import org.kohsuke.jinterop.Property;
 import org.jinterop.dcom.common.JIException;
 
 /**
- * 
+ * Represents a Windows service.
+ *
+ * See http://msdn.microsoft.com/en-us/library/aa394418(VS.85).aspx
+ *
  * @author Kohsuke Kawaguchi
  */
 public interface Win32Service extends JIProxy {
+    /**
+     * Current status of the object. Various operational and nonoperational statuses can
+     * be defined. Operational statuses include: "OK", "Degraded", and "Pred Fail"
+     * (an element, such as a SMART-enabled hard disk drive, may be functioning
+     * properly but predicting a failure in the near future). Nonoperational
+     * statuses include: "Error", "Starting", "Stopping", and "Service".
+     * The latter, "Service", could apply during mirror-resilvering of a disk,
+     * reload of a user permissions list, or other administrative work.
+     * Not all such work is online, yet the managed element is neither "OK" nor
+     * in one of the other states.
+     *
+     * <p>
+     * The values are:
+     * <ul>
+     * <li>"OK"
+     * <li>"Error"
+     * <li>"Degraded"
+     * <li>"Unknown"
+     * <li>"Pred Fail"
+     * <li>"Starting"
+     * <li>"Stopping"
+     * <li>"Service"
+     * </ul>
+     */
     @Property
     String Status() throws JIException;
+
+    /**
+     * Current state of the service.
+     *
+     * Possible values are:
+     * <ul>
+     * <li>"Stopped"
+     * <li>"Start Pending"
+     * <li>"Stop Pending"
+     * <li>"Running"
+     * <li>"Continue Pending"
+     * <li>"Pause Pending"
+     * <li>"Paused"
+     * <li>"Unknown"
+     * </ul>
+     */
+    @Property
+    String State() throws JIException;
+
+    /**
+     * Service has been started.
+     */
+    @Property
+    boolean Started() throws JIException;
 
     /**
      * Creates a service.
