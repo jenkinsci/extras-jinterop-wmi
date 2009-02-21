@@ -50,18 +50,18 @@ public interface SWbemServices extends JIProxy {
     SWbemObject Get(String objectPath) throws JIException;
 
     /**
-     * A variation of {@link #Get(String)} that tests whether an object exists on the given path.
+     * A variation of {@link #Get(String)} that returns null
+     * if the object doesn't exist, instead of throwing an exception.
      */
-    boolean Exists(String objectPath) throws JIException;
+    SWbemObject GetOrNull(String objectPath) throws JIException;
 
     public static class Implementation {
-        public static boolean Exists(SWbemServices _this, String objectPath) throws JIException {
+        public static SWbemObject GetOrNull(SWbemServices _this, String objectPath) throws JIException {
             try {
-                _this.Get(objectPath);
-                return true;
+                return _this.Get(objectPath);
             } catch (JIException e) {
                 if(e.getErrorCode()==0x80020009)
-                    return false;
+                    return null;
                 throw e;
             }
         }
