@@ -35,6 +35,7 @@ public interface SWbemServices extends JIProxy {
     SWbemObjectSet InstancesOf(String clazz) throws JIException;
 
     /**
+     * Gets a particular object/class.
      *
      * @param objectPath
      *      If a class name like "Win32_Service" is specified, you get the class object
@@ -47,4 +48,22 @@ public interface SWbemServices extends JIProxy {
     SWbemObject Get(String objectPath, int flags, Object objWbemNamedValueSet) throws JIException;
 
     SWbemObject Get(String objectPath) throws JIException;
+
+    /**
+     * A variation of {@link #Get(String)} that tests whether an object exists on the given path.
+     */
+    boolean Exists(String objectPath) throws JIException;
+
+    public static class Implementation {
+        public static boolean Exists(SWbemServices _this, String objectPath) throws JIException {
+            try {
+                _this.Get(objectPath);
+                return true;
+            } catch (JIException e) {
+                if(e.getErrorCode()==0x80020009)
+                    return false;
+                throw e;
+            }
+        }
+    }
 }

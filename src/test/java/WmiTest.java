@@ -1,5 +1,6 @@
 import junit.framework.TestCase;
 import org.jinterop.dcom.core.JISession;
+import org.jinterop.dcom.common.JIException;
 import org.jvnet.hudson.wmi.SWbemServices;
 import org.jvnet.hudson.wmi.WMI;
 import org.jvnet.hudson.wmi.Win32Service;
@@ -19,7 +20,7 @@ public class WmiTest extends TestCase {
         session.setGlobalSocketTimeout(30000);
         SWbemServices services = WMI.connect(session, host);
 
-        services.Get("Win32_Service.Name=\"no_such_service\"");
+        assertFalse(services.Exists("Win32_Service.Name=\"no_such_service\""));
 
         Win32Service svc = services.Get("Win32_Service").cast(Win32Service.class);
         int r = svc.Create("test", "test service", "notepad.exe",
