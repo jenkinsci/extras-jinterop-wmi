@@ -1,9 +1,12 @@
 import junit.framework.TestCase;
 import org.jinterop.dcom.core.JISession;
+import org.jinterop.dcom.common.JIException;
 import org.jvnet.hudson.wmi.SWbemServices;
 import org.jvnet.hudson.wmi.WMI;
 import org.jvnet.hudson.wmi.Win32Service;
 import static org.jvnet.hudson.wmi.Win32Service.Win32OwnProcess;
+
+import java.net.UnknownHostException;
 
 /**
  * @author Kohsuke Kawaguchi
@@ -15,9 +18,7 @@ public class WmiTest extends TestCase {
     private String password = System.getProperty("wmi.password","");
 
     public void testService() throws Exception {
-        JISession session = JISession.createSession(domain, user, password);
-        session.setGlobalSocketTimeout(30000);
-        SWbemServices services = WMI.connect(session, host);
+        SWbemServices services = connect();
 
         assertNull(services.GetOrNull("Win32_Service.Name=\"no_such_service\""));
 
@@ -36,5 +37,19 @@ public class WmiTest extends TestCase {
 
         r = inst.Delete();
         assertEquals(0,r);
+    }
+
+    public void testServiceStatus() throws Exception {
+        Win32Service eventLog = connect().Get("Win32_Service.Name=\"Eventlog\"").cast(Win32Service.class);
+        assertEquals("OK",eventLog.Status());
+        assertEquals("Running",eventLog.State());
+        assertTrue(eventLog.Started());
+    }
+
+    private SWbemServices connect() throws UnknownHostException, JIException {
+        JISession session = JISession.createSession(domain, user, password);
+        session.setGlobalSocketTimeout(30000);
+        SWbemServices services = WMI.connect(session, host);
+        return services;
     }
 }
