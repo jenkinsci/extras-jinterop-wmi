@@ -55,6 +55,11 @@ public interface SWbemServices extends JIProxy {
      */
     SWbemObject GetOrNull(String objectPath) throws JIException;
 
+    /**
+     * Gets the {@link Win32Service} of the given name, or null.
+     */
+    Win32Service getService(String serviceName) throws JIException;
+
     public static class Implementation {
         public static SWbemObject GetOrNull(SWbemServices _this, String objectPath) throws JIException {
             try {
@@ -64,6 +69,12 @@ public interface SWbemServices extends JIProxy {
                     return null;
                 throw e;
             }
+        }
+
+        public static Win32Service getService(SWbemServices _this, String serviceName) throws JIException {
+            SWbemObject r = GetOrNull(_this, "Win32_Service.Name=\"" + serviceName + "\"");
+            if(r==null) return null;
+            return r.cast(Win32Service.class);
         }
     }
 }
