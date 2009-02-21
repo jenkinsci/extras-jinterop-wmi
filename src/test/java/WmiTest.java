@@ -17,9 +17,11 @@ public class WmiTest extends TestCase {
     public void testService() throws Exception {
         JISession session = JISession.createSession(domain, user, password);
         session.setGlobalSocketTimeout(30000);
+        SWbemServices services = WMI.connect(session, host);
 
-        SWbemServices wbemServices = WMI.connect(session, host);
-        Win32Service svc = wbemServices.Get("Win32_Service").cast(Win32Service.class);
+        services.Get("Win32_Service.Name=\"no_such_service\"");
+
+        Win32Service svc = services.Get("Win32_Service").cast(Win32Service.class);
         int r = svc.Create("test", "test service", "notepad.exe",
                 Win32OwnProcess, 0, "Manual", true);
         if(r==0 || r==23/*already exists*/)
@@ -27,7 +29,7 @@ public class WmiTest extends TestCase {
         else
             assertEquals(0,r); // let it fail and see the value of r
 
-        Win32Service inst = wbemServices.Get("Win32_Service.Name=\"test\"").cast(Win32Service.class);
+        Win32Service inst = services.Get("Win32_Service.Name=\"test\"").cast(Win32Service.class);
 
         System.out.println(inst.Status());
         System.out.println(inst.StopService());

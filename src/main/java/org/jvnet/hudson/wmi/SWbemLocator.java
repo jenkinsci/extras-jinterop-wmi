@@ -24,6 +24,7 @@
 package org.jvnet.hudson.wmi;
 
 import org.kohsuke.jinterop.JIProxy;
+import org.jinterop.dcom.common.JIException;
 
 /**
  * Entry point to WMI.
@@ -32,5 +33,6 @@ import org.kohsuke.jinterop.JIProxy;
  * @see http://msdn.microsoft.com/en-us/library/aa393719(VS.85).aspx
  */
 public interface SWbemLocator extends JIProxy {
-    SWbemServices ConnectServer(String server, String namespace, String user, String password, String locale, String authority, int securityFlags, Object objwbemNamedValueSet);
+    SWbemServices ConnectServer(String server, String namespace, String user, String password) throws JIException;
+    SWbemServices ConnectServer(String server, String namespace, String user, String password, String locale, String authority, int securityFlags, Object objwbemNamedValueSet) throws JIException;
 }

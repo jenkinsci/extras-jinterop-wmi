@@ -24,14 +24,15 @@
 package org.jvnet.hudson.wmi;
 
 import org.kohsuke.jinterop.JIProxy;
+import org.jinterop.dcom.common.JIException;
 
 /**
  * @author Kohsuke Kawaguchi
  */
 public interface Win32OperatingSystem extends JIProxy {
-    void Shutdown();
-    void Reboot();
+    void Shutdown() throws JIException;
+    void Reboot() throws JIException;
     // 4 = force flag
     // 0 logoff, 1 shutdown, 2 reboot, 8 poweroff
-    void Win32Shutdown(int flags, int _);
+    void Win32Shutdown(int flags, int _) throws JIException;
 }

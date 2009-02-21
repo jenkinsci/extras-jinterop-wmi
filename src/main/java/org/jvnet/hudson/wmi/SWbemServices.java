@@ -24,14 +24,15 @@
 package org.jvnet.hudson.wmi;
 
 import org.kohsuke.jinterop.JIProxy;
+import org.jinterop.dcom.common.JIException;
 
 /**
  * @author Kohsuke Kawaguchi
  */
 public interface SWbemServices extends JIProxy {
-    SWbemObjectSet InstancesOf(String clazz, int flags, Object unused);
+    SWbemObjectSet InstancesOf(String clazz, int flags, Object unused) throws JIException;
 
-    SWbemObjectSet InstancesOf(String clazz);
+    SWbemObjectSet InstancesOf(String clazz) throws JIException;
 
     /**
      *
@@ -43,7 +44,7 @@ public interface SWbemServices extends JIProxy {
      *      the authoritative documentation of the syntax.) Examples I've seen
      *      includes "Win32_Service.Name=\"foo\"" 
      */
-    SWbemObject Get(String objectPath, int flags, Object objWbemNamedValueSet);
+    SWbemObject Get(String objectPath, int flags, Object objWbemNamedValueSet) throws JIException;
 
-    SWbemObject Get(String objectPath);
+    SWbemObject Get(String objectPath) throws JIException;
 }

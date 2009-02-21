@@ -25,6 +25,7 @@ package org.jvnet.hudson.wmi;
 
 import org.kohsuke.jinterop.JIProxy;
 import org.kohsuke.jinterop.Property;
+import org.jinterop.dcom.common.JIException;
 
 /**
  * 
@@ -32,7 +33,7 @@ import org.kohsuke.jinterop.Property;
  */
 public interface Win32Service extends JIProxy {
     @Property
-    String Status();
+    String Status() throws JIException;
 
     /**
      * Creates a service.
@@ -43,11 +44,11 @@ public interface Win32Service extends JIProxy {
                String pathName, int serviceType, int errorControl,
                String startMode, boolean desktopInteract, String startName,
                String startPassword, String loadOrderGroup, String[] loadOrderGroupDependencies,
-               String[] serviceDependencies);
+               String[] serviceDependencies) throws JIException;
 
     int Create(String name, String displayName,
                String pathName, int serviceType, int errorControl,
-               String startMode, boolean desktopInteract);
+               String startMode, boolean desktopInteract) throws JIException;
 
     // serviceType constants
     // see http://msdn.microsoft.com/en-us/library/tfdtdw0e(VS.80).aspx
@@ -59,8 +60,8 @@ public interface Win32Service extends JIProxy {
     /**
      * Deletes a service.
      */
-    int Delete();
+    int Delete() throws JIException;
 
-    int StartService();
-    int StopService();
+    int StartService() throws JIException;
+    int StopService() throws JIException;
 }
