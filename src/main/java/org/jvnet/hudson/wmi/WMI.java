@@ -23,27 +23,28 @@
  */
 package org.jvnet.hudson.wmi;
 
-import org.kohsuke.jinterop.JIProxy;
+import org.jinterop.dcom.core.JIComServer;
+import org.jinterop.dcom.core.JIClsid;
+import org.jinterop.dcom.core.JISession;
+import org.jinterop.dcom.common.JIException;
+import org.jinterop.dcom.common.JISystem;
+import org.kohsuke.jinterop.JInteropInvocationHandler;
+
+import java.net.UnknownHostException;
 
 /**
+ * Connects to the remote WMI via DCOM. 
  * @author Kohsuke Kawaguchi
  */
-public interface SWbemServices extends JIProxy {
-    SWbemObjectSet InstancesOf(String clazz, int flags, Object unused);
+public class WMI {
+    public static SWbemServices connect(JISession session, String hostName) throws UnknownHostException, JIException {
+        JIComServer comStub = new JIComServer(
+                JIClsid.valueOf("76A64158-CB41-11D1-8B02-00600806D9B6"),hostName, session);
+        SWbemLocator loc = JInteropInvocationHandler.wrap(SWbemLocator.class,comStub.createInstance());
+        return loc.ConnectServer("localhost", null, null, null, null, null, 0, null);
+    }
 
-    SWbemObjectSet InstancesOf(String clazz);
-
-    /**
-     *
-     * @param objectPath
-     *      If a class name like "Win32_Service" is specified, you get the class object
-     *      (from which you can invoke class methods.)
-     *
-     *      This parameter also supports the path notation (although I haven't found
-     *      the authoritative documentation of the syntax.) Examples I've seen
-     *      includes "Win32_Service.Name=\"foo\"" 
-     */
-    SWbemObject Get(String objectPath, int flags, Object objWbemNamedValueSet);
-
-    SWbemObject Get(String objectPath);
+    static {
+        JISystem.setAutoRegisteration(true);
+    }
 }

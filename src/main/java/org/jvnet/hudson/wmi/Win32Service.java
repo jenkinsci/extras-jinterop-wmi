@@ -24,26 +24,43 @@
 package org.jvnet.hudson.wmi;
 
 import org.kohsuke.jinterop.JIProxy;
+import org.kohsuke.jinterop.Property;
 
 /**
+ * 
  * @author Kohsuke Kawaguchi
  */
-public interface SWbemServices extends JIProxy {
-    SWbemObjectSet InstancesOf(String clazz, int flags, Object unused);
-
-    SWbemObjectSet InstancesOf(String clazz);
+public interface Win32Service extends JIProxy {
+    @Property
+    String Status();
 
     /**
+     * Creates a service.
      *
-     * @param objectPath
-     *      If a class name like "Win32_Service" is specified, you get the class object
-     *      (from which you can invoke class methods.)
-     *
-     *      This parameter also supports the path notation (although I haven't found
-     *      the authoritative documentation of the syntax.) Examples I've seen
-     *      includes "Win32_Service.Name=\"foo\"" 
+     * See http://msdn.microsoft.com/en-us/library/aa389390(VS.85).aspx
      */
-    SWbemObject Get(String objectPath, int flags, Object objWbemNamedValueSet);
+    int Create(String name, String displayName,
+               String pathName, int serviceType, int errorControl,
+               String startMode, boolean desktopInteract, String startName,
+               String startPassword, String loadOrderGroup, String[] loadOrderGroupDependencies,
+               String[] serviceDependencies);
 
-    SWbemObject Get(String objectPath);
+    int Create(String name, String displayName,
+               String pathName, int serviceType, int errorControl,
+               String startMode, boolean desktopInteract);
+
+    // serviceType constants
+    // see http://msdn.microsoft.com/en-us/library/tfdtdw0e(VS.80).aspx
+    // and http://msdn.microsoft.com/en-us/library/aa389390(VS.85).aspx
+    final int Win32OwnProcess = 16;
+    final int Win32ShareProcess = 32;
+    final int InteractiveProcess = 256;
+
+    /**
+     * Deletes a service.
+     */
+    int Delete();
+
+    int StartService();
+    int StopService();
 }
