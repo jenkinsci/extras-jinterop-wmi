@@ -101,6 +101,11 @@ public interface Win32Service extends JIProxy {
                String pathName, int serviceType, int errorControl,
                String startMode, boolean desktopInteract) throws JIException;
 
+    /**
+     * Gets the error message for the return code of the service manipulation method.
+     */
+    public String getErrorMessage(int r);
+
     // serviceType constants
     // see http://msdn.microsoft.com/en-us/library/tfdtdw0e(VS.80).aspx
     // and http://msdn.microsoft.com/en-us/library/aa389390(VS.85).aspx
@@ -113,6 +118,75 @@ public interface Win32Service extends JIProxy {
      */
     int Delete() throws JIException;
 
+    /**
+     * @deprecated
+     *      This method doesn't throw a failure as an exception.
+     *      Use {@link #start()} instead.
+     */
     int StartService() throws JIException;
+
+    /**
+     * Starts a service.
+     */
+    void start() throws JIException;
+
+    /**
+     * @deprecated
+     *      This method doesn't throw a failure as an exception.
+     *      Use {@link #stop()} instead.
+     */
     int StopService() throws JIException;
+
+    /**
+     * Stops a service.
+     */
+    void stop() throws JIException;
+
+    public class Implementation {
+        public static void start(Win32Service _this) throws JIException {
+            int r = _this.StartService();
+            if(r!=0)
+                throw new JIException(E_FAIL,getErrorMessage(_this,r));
+        }
+
+        public static void stop(Win32Service _this) throws JIException {
+            int r = _this.StopService();
+            if(r!=0)
+                throw new JIException(E_FAIL,getErrorMessage(_this,r));
+        }
+
+        public static String getErrorMessage(Win32Service _this, int r) {
+            switch (r) {
+            case 0: return "Success";
+            case 1: return "Not Supported";
+            case 2: return "Access Denied";
+            case 3: return "Dependent Services Running";
+            case 4: return "Invalid Service Control";
+            case 5: return "Service Cannot Accept Control";
+            case 6: return "Service Not Active";
+            case 7: return "Service Request Timeout";
+            case 8: return "Unknown Failure";
+            case 9: return "Path Not Found";
+            case 10: return "Service Already Running";
+            case 11: return "Service Database Locked";
+            case 12: return "Service Dependency Deleted";
+            case 13: return "Service Dependency Failure";
+            case 14: return "Service Disabled";
+            case 15: return "Service Logon Failure";
+            case 16: return "Service Marked For Deletion";
+            case 17: return "Service No Thread";
+            case 18: return "Status Circular Dependency";
+            case 19: return "Status Duplicate Name";
+            case 20: return "Status Invalid Name";
+            case 21: return "Status Invalid Parameter";
+            case 22: return "Status Invalid Service Account";
+            case 23: return "Status Service Exists";
+            case 24: return "Service Already Paused";
+            default:
+                return "Unknown error code "+r;
+            }
+        }
+    }
+
+    static final int E_FAIL = 0x80004005;
 }
