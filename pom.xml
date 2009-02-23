@@ -15,7 +15,7 @@
     <dependency>
       <groupId>org.kohsuke.jinterop</groupId>
       <artifactId>jinterop-proxy</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -24,4 +24,14 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <profiles>
+    <profile>
+      <id>release</id>
+      <properties>
+        <!-- so that I can release this without a test environment. -->
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+    </profile>
+  </profiles>
 </project>
