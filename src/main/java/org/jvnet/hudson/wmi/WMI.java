@@ -38,6 +38,24 @@ import java.net.UnknownHostException;
  */
 public class WMI {
     public static SWbemServices connect(JISession session, String hostName) throws UnknownHostException, JIException {
+        /*
+            If this fails with 0x00000005 or 0x80070005,
+            I found that the following makes a difference:
+
+            "Control Panel" -> "Administrative Tools" -> "Local Security Policy"
+             -> "Local Policies" -> "Security Options" -> "Network Access: Sharing security model for local accounts"
+
+            Set this to classic, so that the specified credential of the local user is authenticaed accordingly,
+            instead of as a guest, which won't have the access to the system.
+
+            Also see more comprehensive trobule-shooting guide on this topic at pages like:
+            http://www.pcreview.co.uk/forums/thread-2164135.php
+            http://www.computerperformance.co.uk/Logon/code/code_80070005.htm
+            http://social.answers.microsoft.com/Forums/en-US/vistawu/thread/8eee0f53-9d95-46c8-89b7-5f12538e9f88
+
+            TODO: user account with empty password also doesn't seem to work.
+            
+         */
         JIComServer comStub = new JIComServer(
                 JIClsid.valueOf("76A64158-CB41-11D1-8B02-00600806D9B6"),hostName, session);
         SWbemLocator loc = JInteropInvocationHandler.wrap(SWbemLocator.class,comStub.createInstance());
